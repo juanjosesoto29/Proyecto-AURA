@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURA — MVP Rebalanceo de Carga</title>
+<style>
+  :root{--bg:#0A0F1E;--card:#1E293B;--cyan:#00C2FF;--green:#10B981;--gold:#F5A623;--red:#EF4444;--txt:#CBD5E1;--mute:#8A9BB0;--white:#fff}
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif}
+  body{background:var(--bg);color:var(--txt);padding:1.5rem;max-width:1100px;margin:0 auto}
+  header{border-bottom:3px solid var(--cyan);padding-bottom:1rem;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap}
+  h1{color:var(--white);font-size:1.6rem}
+  h1 span{color:var(--cyan)}
+  .sub{color:var(--mute);font-size:.9rem;margin-top:.3rem}
+  .userbox{font-size:.85rem;color:var(--mute);text-align:right}
+  .userbox b{color:var(--cyan)}
+  .rolechip{display:inline-block;font-size:.7rem;font-weight:700;padding:.12rem .55rem;border-radius:12px;background:rgba(0,194,255,.15);color:var(--cyan);border:1px solid var(--cyan);margin-left:.3rem;text-transform:uppercase}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+  .kpi{background:var(--card);border-radius:10px;padding:1rem;text-align:center;border-top:3px solid var(--cyan)}
+  .kpi .n{font-size:2rem;font-weight:800}
+  .kpi .l{font-size:.78rem;color:var(--mute);text-transform:uppercase}
+  .kpi.red{border-color:var(--red)}.kpi.red .n{color:var(--red)}
+  .kpi.gold{border-color:var(--gold)}.kpi.gold .n{color:var(--gold)}
+  .kpi.green{border-color:var(--green)}.kpi.green .n{color:var(--green)}
+  h2{color:var(--cyan);font-size:1.1rem;margin:1.2rem 0 .7rem}
+  .teams{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem}
+  .team{background:var(--card);border-radius:10px;padding:1rem;border-left:4px solid var(--mute)}
+  .team.SOBRECARGADO{border-color:var(--red)}
+  .team.SUBUTILIZADO{border-color:var(--gold)}
+  .team.OK{border-color:var(--green)}
+  .team .name{font-weight:700;color:var(--white)}
+  .team .sede{font-size:.8rem;color:var(--mute);margin-bottom:.5rem}
+  .bar{background:#0d1424;border-radius:6px;height:14px;overflow:hidden;margin:.4rem 0}
+  .bar>div{height:100%;border-radius:6px;transition:width .4s}
+  .badge{display:inline-block;font-size:.72rem;font-weight:700;padding:.15rem .6rem;border-radius:12px;margin-top:.3rem}
+  .b-SOBRECARGADO{background:rgba(239,68,68,.15);color:var(--red);border:1px solid var(--red)}
+  .b-SUBUTILIZADO{background:rgba(245,166,35,.15);color:var(--gold);border:1px solid var(--gold)}
+  .b-OK{background:rgba(16,185,129,.15);color:var(--green);border:1px solid var(--green)}
+  .sug{background:var(--card);border-radius:10px;padding:1rem;border-left:4px solid var(--green);margin-bottom:.6rem;display:flex;align-items:center;gap:.8rem}
+  .sug .arrow{font-size:1.3rem;color:var(--green)}
+  form{background:var(--card);border-radius:10px;padding:1.2rem;display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:.8rem;align-items:end;margin-top:.7rem}
+  label{display:block;font-size:.78rem;color:var(--mute);margin-bottom:.3rem}
+  input,select{width:100%;padding:.6rem;border-radius:7px;border:1px solid #334;background:#0d1424;color:var(--white)}
+  button{background:var(--cyan);color:#06121f;border:none;padding:.65rem 1.2rem;border-radius:7px;font-weight:700;cursor:pointer}
+  button:hover{background:#33d0ff}
+  .btn-sec{background:transparent;color:var(--mute);border:1px solid #334;padding:.4rem .9rem;font-weight:600}
+  .empty{color:var(--mute);font-style:italic;padding:.5rem}
+  .note{font-size:.8rem;color:var(--gold);background:rgba(245,166,35,.08);border:1px solid var(--gold);border-radius:8px;padding:.6rem .9rem;margin-top:.7rem}
+  /* LOGIN */
+  #login{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:10}
+  .loginbox{background:var(--card);border-radius:14px;padding:2rem;width:360px;border-top:4px solid var(--cyan);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .loginbox h1{font-size:1.5rem;margin-bottom:.2rem}
+  .loginbox .sub{margin-bottom:1.3rem}
+  .loginbox label{margin-top:.8rem}
+  .loginbox button{width:100%;margin-top:1.2rem;padding:.7rem}
+  .err{color:var(--red);font-size:.85rem;margin-top:.8rem;display:none}
+  .hint{font-size:.75rem;color:var(--mute);margin-top:1rem;line-height:1.5;border-top:1px solid #2a3550;padding-top:.8rem}
+  .lock{font-size:2.2rem}
+  @media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}form{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+  <!-- ===== LOGIN ===== -->
+  <div id="login">
+    <div class="loginbox">
+      <div class="lock">🔒</div>
+      <h1><span>AURA</span> · Acceso</h1>
+      <div class="sub">HealthTech Innovations — control de acceso seguro</div>
+      <form id="loginForm">
+        <label>Usuario</label>
+        <input id="u" autocomplete="username" required>
+        <label>Contraseña</label>
+        <input id="p" type="password" autocomplete="current-password" required>
+        <button type="submit">Ingresar</button>
+        <div class="err" id="err">Usuario o contraseña incorrectos</div>
+      </form>
+      <div class="hint">
+        Usuarios de prueba:<br>
+        • <b>admin</b> / admin123 — acceso total<br>
+        • <b>gerente</b> / gerente123 — puede asignar proyectos<br>
+        • <b>lector</b> / lector123 — solo lectura
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== APP ===== -->
+  <div id="app" style="display:none">
+    <header>
+      <div>
+        <h1><span>AURA</span> — Gestión y Rebalanceo de Carga</h1>
+        <div class="sub">HealthTech Innovations · MVP funcional · Detecta equipos sobrecargados/subutilizados y sugiere rebalanceo</div>
+      </div>
+      <div class="userbox">
+        <div>👤 <b id="who"></b> <span class="rolechip" id="role"></span></div>
+        <button class="btn-sec" id="logout" style="margin-top:.4rem">Cerrar sesión</button>
+      </div>
+    </header>
+
+    <div class="kpis" id="kpis"></div>
+
+    <h2>Carga por equipo</h2>
+    <div class="teams" id="teams"></div>
+
+    <h2>🔁 Rebalanceo sugerido</h2>
+    <div id="sugerencias"></div>
+
+    <div id="formWrap">
+      <h2>➕ Asignar nuevo proyecto</h2>
+      <form id="form">
+        <div><label>Nombre del proyecto</label><input id="nombre" required placeholder="Ej: Auditoría HIPAA Q3"></div>
+        <div><label>Equipo</label><select id="equipo"></select></div>
+        <div><label>Horas estimadas</label><input id="horas" type="number" min="1" value="60" required></div>
+        <div><button type="submit">Asignar</button></div>
+      </form>
+    </div>
+    <div class="note" id="lectorNote" style="display:none">🔒 Tu rol es <b>lector</b>: tienes acceso de solo lectura. La asignación de proyectos está restringida a los roles admin/gerente (principio de mínimo privilegio · HIPAA/GDPR).</div>
+  </div>
+
+<script>
+const API = "";
+let token = localStorage.getItem("aura_token") || "";
+let rol = localStorage.getItem("aura_rol") || "";
+let usuario = localStorage.getItem("aura_user") || "";
+
+function authHeaders(extra={}){ return Object.assign({"Authorization":"Bearer "+token}, extra); }
+function color(e){return e==="SOBRECARGADO"?"var(--red)":e==="SUBUTILIZADO"?"var(--gold)":"var(--green)";}
+
+// ---- LOGIN ----
+document.getElementById("loginForm").addEventListener("submit", async (ev)=>{
+  ev.preventDefault();
+  const body = new URLSearchParams();
+  body.append("username", document.getElementById("u").value);
+  body.append("password", document.getElementById("p").value);
+  const r = await fetch(API+"/api/login",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body});
+  if(!r.ok){ document.getElementById("err").style.display="block"; return; }
+  const d = await r.json();
+  token=d.access_token; rol=d.rol; usuario=d.usuario;
+  localStorage.setItem("aura_token",token); localStorage.setItem("aura_rol",rol); localStorage.setItem("aura_user",usuario);
+  entrar();
+});
+
+document.getElementById("logout").addEventListener("click", async ()=>{
+  try{ await fetch(API+"/api/logout",{method:"POST",headers:authHeaders()});}catch(e){}
+  token=rol=usuario=""; localStorage.clear();
+  document.getElementById("app").style.display="none";
+  document.getElementById("login").style.display="flex";
+});
+
+function entrar(){
+  document.getElementById("login").style.display="none";
+  document.getElementById("app").style.display="block";
+  document.getElementById("who").textContent=usuario;
+  document.getElementById("role").textContent=rol;
+  // UI según rol (mínimo privilegio)
+  const esLector = rol==="lector";
+  document.getElementById("formWrap").style.display = esLector ? "none" : "block";
+  document.getElementById("lectorNote").style.display = esLector ? "block" : "none";
+  cargar();
+}
+
+// ---- DASHBOARD ----
+async function cargar(){
+  const r = await fetch(API+"/api/analisis",{headers:authHeaders()});
+  if(r.status===401){ document.getElementById("logout").click(); return; }
+  const d = await r.json();
+
+  document.getElementById("kpis").innerHTML = `
+    <div class="kpi"><div class="n">${d.kpis.total_equipos}</div><div class="l">Equipos</div></div>
+    <div class="kpi red"><div class="n">${d.kpis.sobrecargados}</div><div class="l">Sobrecargados</div></div>
+    <div class="kpi gold"><div class="n">${d.kpis.subutilizados}</div><div class="l">Subutilizados</div></div>
+    <div class="kpi green"><div class="n">${d.kpis.balanceados}</div><div class="l">Balanceados</div></div>`;
+
+  document.getElementById("teams").innerHTML = d.equipos.map(e=>`
+    <div class="team ${e.estado}">
+      <div class="name">${e.nombre}</div>
+      <div class="sede">📍 ${e.sede} · ${e.horas}h / ${e.capacidad}h</div>
+      <div class="bar"><div style="width:${Math.min(e.uso,100)}%;background:${color(e.estado)}"></div></div>
+      <div style="font-size:.85rem">${e.uso}% de capacidad</div>
+      <span class="badge b-${e.estado}">${e.estado}</span>
+    </div>`).join("");
+
+  const s = document.getElementById("sugerencias");
+  s.innerHTML = d.sugerencias.length
+    ? d.sugerencias.map(x=>`<div class="sug"><span class="arrow">↗</span><div><b>${x.horas}h</b> · ${x.detalle}</div></div>`).join("")
+    : `<div class="empty">✓ No se requiere rebalanceo: todos los equipos están dentro de su capacidad.</div>`;
+
+  document.getElementById("equipo").innerHTML = d.equipos.map(e=>`<option value="${e.id}">${e.nombre} (${e.sede})</option>`).join("");
+}
+
+document.getElementById("form").addEventListener("submit", async (ev)=>{
+  ev.preventDefault();
+  const body = { nombre: document.getElementById("nombre").value, equipo: document.getElementById("equipo").value, horas: parseInt(document.getElementById("horas").value) };
+  const r = await fetch(API+"/api/proyectos",{method:"POST",headers:authHeaders({"Content-Type":"application/json"}),body:JSON.stringify(body)});
+  if(r.status===403){ alert("No tienes permisos para asignar proyectos (rol lector)."); return; }
+  if(r.status===401){ document.getElementById("logout").click(); return; }
+  document.getElementById("nombre").value="";
+  cargar();
+});
+
+// auto-entrar si ya hay token guardado
+if(token){ entrar(); }
+</script>
+</body>
+</html>

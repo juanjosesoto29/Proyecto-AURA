@@ -614,26 +614,51 @@ function initials(name) {
 }
 
 /* ─── LOGIN ─── */
+const BTN_HTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> Ingresar`;
+
+function resetBtn(btn) {
+  btn.style.opacity = "1";
+  btn.disabled = false;
+  btn.innerHTML = BTN_HTML;
+}
+
 document.getElementById("loginForm").addEventListener("submit", async ev => {
   ev.preventDefault();
   const btn = document.getElementById("loginBtn");
-  btn.style.opacity = ".7";
+  btn.style.opacity = ".65";
+  btn.disabled = true;
   btn.textContent = "Verificando...";
+
+  const errEl = document.getElementById("err");
+  errEl.classList.remove("show");
+
   const body = new URLSearchParams();
   body.append("username", document.getElementById("u").value);
   body.append("password", document.getElementById("p").value);
-  const r = await fetch(API + "/api/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body
-  });
-  if (!r.ok) {
-    document.getElementById("err").classList.add("show");
-    btn.style.opacity = "1";
-    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> Ingresar`;
+
+  let r;
+  try {
+    r = await fetch(API + "/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body
+    });
+  } catch (e) {
+    // Error de red (servidor apagado, CORS, etc.)
+    errEl.querySelector ? null : null;
+    errEl.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> No se puede conectar al servidor — ¿está uvicorn corriendo?`;
+    errEl.classList.add("show");
+    resetBtn(btn);
     return;
   }
-  document.getElementById("err").classList.remove("show");
+
+  if (!r.ok) {
+    errEl.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Usuario o contraseña incorrectos`;
+    errEl.classList.add("show");
+    resetBtn(btn);
+    return;
+  }
+
   const d = await r.json();
   token = d.access_token; rol = d.rol; usuario = d.usuario;
   localStorage.setItem("aura_token", token);

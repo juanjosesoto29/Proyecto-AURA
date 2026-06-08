@@ -56,6 +56,11 @@
   .err{color:var(--red);font-size:.85rem;margin-top:.8rem;display:none}
   .hint{font-size:.75rem;color:var(--mute);margin-top:1rem;line-height:1.5;border-top:1px solid #2a3550;padding-top:.8rem}
   .lock{font-size:2.2rem}
+  /* Login form: columna única, sin grid del form general */
+  #loginForm{display:flex;flex-direction:column;gap:0;background:transparent;padding:0;border-radius:0;margin-top:0}
+  #loginForm label{margin-top:.9rem;margin-bottom:.3rem;font-size:.82rem;color:var(--mute)}
+  #loginForm input{width:100%;padding:.65rem .8rem;border-radius:8px;border:1px solid #334;background:#0d1424;color:var(--white);font-size:.95rem}
+  #loginForm input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 2px rgba(0,194,255,.15)}
   @media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}form{grid-template-columns:1fr}}
 </style>
 </head>

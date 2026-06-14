@@ -134,6 +134,7 @@ def analizar() -> dict:
             mover = min(exceso, holgura)
             sugerencias.append({
                 "desde": s["nombre"], "hacia": libre["nombre"],
+                "desde_id": s["id"], "hacia_id": libre["id"],
                 "horas": mover,
                 "detalle": f"Mover {mover}h de {s['nombre']} ({s['sede']}) a {libre['nombre']} ({libre['sede']})",
             })
@@ -149,8 +150,58 @@ def analizar() -> dict:
             "subutilizados": len(subutilizados),
             "balanceados": len([r for r in resumen if r["estado"] == "OK"]),
         },
+        "balance": indice_balance(resumen),
         "sugerencias": sugerencias,
         "proyectos": proyectos,
+    }
+
+
+def indice_balance(resumen) -> int:
+    """Índice 0–100 de equilibrio organizacional: 100 = todos los equipos dentro de
+    la banda saludable [60%, 85%]. Penaliza la desviación fuera de la banda."""
+    if not resumen:
+        return 100
+    penalizacion = 0.0
+    for r in resumen:
+        uso = r["uso"] / 100
+        if uso > UMBRAL_SOBRECARGA:
+            p = (uso - UMBRAL_SOBRECARGA) / UMBRAL_SOBRECARGA
+        elif uso < UMBRAL_SUBUTILIZADO:
+            p = (UMBRAL_SUBUTILIZADO - uso) / UMBRAL_SUBUTILIZADO
+        else:
+            p = 0.0
+        penalizacion += min(p, 1.0)
+    return round(100 * (1 - penalizacion / len(resumen)))
+
+
+def simular() -> dict:
+    """Aplica las sugerencias de rebalanceo SOBRE UNA COPIA y devuelve el estado
+    'antes' y 'después', para demostrar que el rebalanceo resuelve la sobrecarga.
+    No altera los datos reales: es una proyección."""
+    base = analizar()
+    # horas proyectadas por id (copia)
+    proy = {e["id"]: e["horas"] for e in base["equipos"]}
+    for s in base["sugerencias"]:
+        proy[s["desde_id"]] -= s["horas"]
+        proy[s["hacia_id"]] += s["horas"]
+
+    equipos_proy = []
+    for e in base["equipos"]:
+        h = proy[e["id"]]
+        uso = h / e["capacidad"] if e["capacidad"] else 0
+        equipos_proy.append({**e, "horas": h, "uso": round(uso * 100, 1), "estado": estado_equipo(uso)})
+
+    kpis_proy = {
+        "total_equipos": len(equipos_proy),
+        "sobrecargados": len([x for x in equipos_proy if x["estado"] == "SOBRECARGADO"]),
+        "subutilizados": len([x for x in equipos_proy if x["estado"] == "SUBUTILIZADO"]),
+        "balanceados":   len([x for x in equipos_proy if x["estado"] == "OK"]),
+    }
+    return {
+        "actual":     {"equipos": base["equipos"], "kpis": base["kpis"], "balance": base["balance"]},
+        "proyectado": {"equipos": equipos_proy, "kpis": kpis_proy, "balance": indice_balance(equipos_proy)},
+        "sugerencias": base["sugerencias"],
+        "horas_movidas": sum(s["horas"] for s in base["sugerencias"]),
     }
 
 
@@ -191,6 +242,13 @@ def api_analisis(user: dict = Depends(usuario_actual)):
     return analizar()
 
 
+@app.get("/api/simular")
+def api_simular(user: dict = Depends(usuario_actual)):
+    """[Autenticado] Proyección 'antes vs. después' de aplicar el rebalanceo sugerido.
+    Demuestra que la solución ELIMINA la sobrecarga, no solo la detecta."""
+    return simular()
+
+
 @app.get("/api/equipos")
 def api_equipos(user: dict = Depends(usuario_actual)):
     """[Autenticado] Lista de equipos."""
@@ -207,3 +265,19 @@ def api_add_proyecto(p: ProyectoIn, user: dict = Depends(requiere_rol("admin", "
     proyectos.append({"nombre": p.nombre, "equipo": p.equipo, "horas": p.horas})
     equipos[p.equipo]["horas"] += p.horas
     return analizar()
+
+
+# ─── Arranque directo ───
+# Permite ejecutar el MVP con  `python main.py`  (o doble clic), sin recordar el
+# comando de uvicorn. Abre http://127.0.0.1:8000 en el navegador.
+if __name__ == "__main__":
+    import uvicorn
+    import webbrowser
+    import threading
+
+    URL = "http://127.0.0.1:8000"
+    print(f"\n  AURA MVP en marcha  →  {URL}")
+    print("  Usuarios: admin/admin123 · gerente/gerente123 · lector/lector123")
+    print("  (Ctrl+C para detener)\n")
+    threading.Timer(1.5, lambda: webbrowser.open(URL)).start()
+    uvicorn.run(app, host="127.0.0.1", port=8000)

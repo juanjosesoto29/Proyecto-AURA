@@ -6,24 +6,29 @@
 <title>AURA — MVP Rebalanceo de Carga</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:    #060D1A;
-    --bg2:   #0A1628;
-    --card:  #0F1E35;
-    --card2: #162540;
-    --border:#1E3A5F;
-    --cyan:  #00C2FF;
-    --cyan2: #0099CC;
-    --green: #10B981;
-    --gold:  #F5A623;
-    --red:   #EF4444;
-    --purple:#7C3AED;
-    --txt:   #CBD5E1;
-    --mute:  #64748B;
-    --white: #F1F5F9;
-    --shadow: 0 4px 24px rgba(0,0,0,.45);
+    --bg:     #F4F7FB;
+    --bg2:    #ECF1F8;
+    --card:   #FFFFFF;
+    --soft:   #F8FAFC;
+    --border: #E2E8F0;
+    --border2:#CBD5E1;
+    --cyan:   #0891B2;
+    --cyan-d: #0E7490;
+    --green:  #059669;
+    --green-l:#10B981;
+    --gold:   #D97706;
+    --gold-l: #F59E0B;
+    --red:    #DC2626;
+    --red-l:  #EF4444;
+    --purple: #7C3AED;
+    --ink:    #0F172A;
+    --txt:    #475569;
+    --mute:   #94A3B8;
+    --shadow:   0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.06);
+    --shadow-h: 0 4px 12px rgba(15,23,42,.08), 0 16px 40px rgba(15,23,42,.10);
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -31,399 +36,312 @@
     background: var(--bg);
     color: var(--txt);
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
   }
+  ::-webkit-scrollbar { width: 9px; height: 9px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 5px; }
 
-  /* ─── SCROLLBAR ─── */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-  /* ─── TOKENS ─── */
-  .text-white  { color: var(--white); }
-  .text-mute   { color: var(--mute); }
-  .text-cyan   { color: var(--cyan); }
-  .text-green  { color: var(--green); }
-  .text-gold   { color: var(--gold); }
-  .text-red    { color: var(--red); }
-
-  /* ════════════════════════════════════
-     LOGIN OVERLAY
-  ════════════════════════════════════ */
+  /* ════════════ LOGIN ════════════ */
   #login {
     position: fixed; inset: 0;
-    background: radial-gradient(ellipse at 30% 40%, rgba(0,194,255,.06) 0%, transparent 60%),
-                radial-gradient(ellipse at 70% 70%, rgba(124,58,237,.05) 0%, transparent 60%),
-                var(--bg);
-    display: flex; align-items: center; justify-content: center; z-index: 100;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(8,145,178,.10) 0%, transparent 55%),
+      radial-gradient(ellipse 70% 60% at 90% 90%, rgba(124,58,237,.08) 0%, transparent 55%),
+      var(--bg);
+    display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem;
   }
-
   .login-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 2.5rem 2.25rem;
-    width: 100%; max-width: 400px;
-    box-shadow: 0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(0,194,255,.08);
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 22px; padding: 2.5rem 2.25rem;
+    width: 100%; max-width: 410px; box-shadow: var(--shadow-h);
     position: relative; overflow: hidden;
   }
   .login-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, var(--purple), var(--cyan), var(--green));
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--cyan), var(--green-l), var(--gold-l));
   }
-
-  .login-logo {
-    display: flex; align-items: center; gap: .65rem; margin-bottom: 1.8rem;
-  }
+  .login-logo { display: flex; align-items: center; gap: .7rem; margin-bottom: 1.6rem; }
   .login-logo .logo-icon {
-    width: 40px; height: 40px; border-radius: 10px;
-    background: linear-gradient(135deg, var(--cyan2), var(--purple));
+    width: 46px; height: 46px; border-radius: 13px;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
     display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 16px rgba(8,145,178,.32);
   }
-  .login-logo .brand { font-size: 1.5rem; font-weight: 800; color: var(--white); letter-spacing: -.02em; }
-  .login-logo .brand span { color: var(--cyan); }
-
-  .login-subtitle { font-size: .82rem; color: var(--mute); margin-bottom: 1.8rem; line-height: 1.5; }
+  .login-logo .brand { font-size: 1.7rem; font-weight: 900; color: var(--ink); letter-spacing: -.03em; }
+  .login-subtitle { font-size: .82rem; color: var(--mute); margin-bottom: 1.7rem; line-height: 1.55; }
+  .login-subtitle b { color: var(--cyan-d); font-weight: 600; }
 
   .field-group { margin-bottom: 1rem; }
   .field-group label {
-    display: block; font-size: .78rem; font-weight: 600;
-    color: var(--mute); text-transform: uppercase; letter-spacing: .06em;
-    margin-bottom: .45rem;
+    display: block; font-size: .72rem; font-weight: 700;
+    color: var(--txt); text-transform: uppercase; letter-spacing: .07em; margin-bottom: .45rem;
   }
   .field-wrap { position: relative; }
   .field-wrap svg.field-icon {
-    position: absolute; left: .85rem; top: 50%; transform: translateY(-50%);
-    width: 16px; height: 16px; color: var(--mute); pointer-events: none;
-    transition: color .2s;
+    position: absolute; left: .9rem; top: 50%; transform: translateY(-50%);
+    width: 17px; height: 17px; color: var(--mute); pointer-events: none; transition: color .2s;
   }
   .field-wrap input {
-    width: 100%; padding: .72rem 1rem .72rem 2.5rem;
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 10px; color: var(--white); font-family: inherit; font-size: .92rem;
-    transition: border-color .2s, box-shadow .2s;
-    outline: none;
+    width: 100%; padding: .8rem 1rem .8rem 2.6rem;
+    background: var(--soft); border: 1.5px solid var(--border);
+    border-radius: 11px; color: var(--ink); font-family: inherit; font-size: .95rem;
+    transition: border-color .2s, box-shadow .2s, background .2s; outline: none;
   }
   .field-wrap input::placeholder { color: var(--mute); }
   .field-wrap input:focus {
-    border-color: var(--cyan);
-    box-shadow: 0 0 0 3px rgba(0,194,255,.12);
+    border-color: var(--cyan); background: var(--card);
+    box-shadow: 0 0 0 4px rgba(8,145,178,.12);
   }
-  .field-wrap input:focus + svg.field-icon,
   .field-wrap:focus-within svg.field-icon { color: var(--cyan); }
 
   .btn-primary {
-    width: 100%; padding: .8rem 1.5rem; margin-top: 1.5rem;
-    background: linear-gradient(135deg, var(--cyan2), var(--cyan));
-    color: #021220; font-family: inherit; font-size: .92rem; font-weight: 700;
-    border: none; border-radius: 10px; cursor: pointer;
-    transition: opacity .2s, transform .15s;
+    width: 100%; padding: .85rem 1.5rem; margin-top: 1.4rem;
+    background: linear-gradient(135deg, var(--cyan), var(--cyan-d));
+    color: #fff; font-family: inherit; font-size: .95rem; font-weight: 700;
+    border: none; border-radius: 11px; cursor: pointer;
+    transition: filter .2s, transform .15s, box-shadow .2s;
     display: flex; align-items: center; justify-content: center; gap: .5rem;
+    box-shadow: 0 6px 16px rgba(8,145,178,.28);
   }
-  .btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+  .btn-primary:hover { filter: brightness(1.06); transform: translateY(-1px); box-shadow: 0 8px 22px rgba(8,145,178,.34); }
   .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: .65; cursor: default; transform: none; }
 
   .login-err {
-    display: none; margin-top: .9rem;
-    background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3);
-    border-radius: 8px; padding: .6rem .9rem;
-    font-size: .82rem; color: var(--red);
+    margin-top: .9rem; background: rgba(220,38,38,.07); border: 1px solid rgba(220,38,38,.25);
+    border-radius: 9px; padding: .65rem .9rem; font-size: .82rem; color: var(--red);
     display: none; align-items: center; gap: .5rem;
   }
   .login-err.show { display: flex; }
 
-  .login-hint {
-    margin-top: 1.5rem; padding-top: 1.2rem;
-    border-top: 1px solid var(--border);
-    font-size: .75rem; color: var(--mute); line-height: 1.8;
-  }
-  .login-hint .hint-title { font-weight: 600; color: var(--txt); margin-bottom: .3rem; font-size: .78rem; }
-  .hint-row { display: flex; align-items: center; gap: .5rem; }
+  .login-hint { margin-top: 1.5rem; padding-top: 1.2rem; border-top: 1px solid var(--border); }
+  .login-hint .hint-title { font-weight: 700; color: var(--txt); margin-bottom: .55rem; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
+  .hint-row { display: flex; align-items: center; gap: .55rem; margin-bottom: .4rem; font-size: .8rem; color: var(--txt); }
+  .hint-row:last-child { margin-bottom: 0; }
   .hint-badge {
-    font-size: .65rem; font-weight: 700; padding: .1rem .45rem;
-    border-radius: 5px; background: rgba(0,194,255,.12);
-    color: var(--cyan); border: 1px solid rgba(0,194,255,.25);
-    min-width: 54px; text-align: center; text-transform: uppercase; letter-spacing: .03em;
+    font-size: .64rem; font-weight: 800; padding: .14rem .5rem; border-radius: 6px;
+    min-width: 58px; text-align: center; text-transform: uppercase; letter-spacing: .04em;
+    background: rgba(8,145,178,.1); color: var(--cyan-d); border: 1px solid rgba(8,145,178,.22);
   }
-  .hint-badge.gb { background: rgba(16,185,129,.12); color: var(--green); border-color: rgba(16,185,129,.25); }
-  .hint-badge.gy { background: rgba(100,116,139,.12); color: var(--mute); border-color: rgba(100,116,139,.25); }
+  .hint-badge.adm { background: rgba(124,58,237,.1); color: var(--purple); border-color: rgba(124,58,237,.22); }
+  .hint-badge.gy  { background: rgba(100,116,139,.1); color: var(--mute); border-color: rgba(148,163,184,.3); }
 
-  /* ════════════════════════════════════
-     APP SHELL
-  ════════════════════════════════════ */
+  /* ════════════ APP SHELL ════════════ */
   #app { display: none; min-height: 100vh; flex-direction: column; }
   #app.visible { display: flex; }
 
-  /* ── TOP NAV ── */
   .topnav {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(6,13,26,.85);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 60px;
+    background: rgba(255,255,255,.88); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border); padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between; height: 64px;
   }
-  .nav-brand { display: flex; align-items: center; gap: .65rem; }
+  .nav-brand { display: flex; align-items: center; gap: .7rem; }
   .nav-logo-icon {
-    width: 30px; height: 30px; border-radius: 7px;
-    background: linear-gradient(135deg, var(--cyan2), var(--purple));
+    width: 34px; height: 34px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
     display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(8,145,178,.3);
   }
-  .nav-brand .brand-name { font-size: 1.1rem; font-weight: 800; color: var(--white); letter-spacing: -.02em; }
-  .nav-brand .brand-name span { color: var(--cyan); }
-  .nav-subtitle { font-size: .72rem; color: var(--mute); margin-left: .3rem; }
+  .nav-brand .brand-name { font-size: 1.2rem; font-weight: 900; color: var(--ink); letter-spacing: -.03em; }
+  .nav-subtitle { font-size: .72rem; color: var(--mute); margin-left: .35rem; font-weight: 500; }
 
   .nav-right { display: flex; align-items: center; gap: 1rem; }
   .user-chip {
     display: flex; align-items: center; gap: .55rem;
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 50px; padding: .3rem .85rem .3rem .5rem;
+    background: var(--soft); border: 1px solid var(--border);
+    border-radius: 50px; padding: .3rem .9rem .3rem .4rem;
   }
   .user-avatar {
-    width: 28px; height: 28px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--cyan2), var(--purple));
+    width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
     display: flex; align-items: center; justify-content: center;
-    font-size: .7rem; font-weight: 700; color: #fff;
+    font-size: .72rem; font-weight: 800; color: #fff;
   }
-  .user-name { font-size: .82rem; font-weight: 600; color: var(--white); }
+  .user-name { font-size: .85rem; font-weight: 700; color: var(--ink); }
   .role-badge {
-    font-size: .65rem; font-weight: 700; padding: .12rem .5rem;
+    font-size: .62rem; font-weight: 800; padding: .14rem .55rem;
     border-radius: 50px; text-transform: uppercase; letter-spacing: .05em;
   }
-  .role-badge.admin { background: rgba(124,58,237,.2); color: #A78BFA; border: 1px solid rgba(124,58,237,.3); }
-  .role-badge.gerente { background: rgba(0,194,255,.15); color: var(--cyan); border: 1px solid rgba(0,194,255,.25); }
-  .role-badge.lector { background: rgba(100,116,139,.15); color: var(--mute); border: 1px solid rgba(100,116,139,.25); }
+  .role-badge.admin   { background: rgba(124,58,237,.12); color: var(--purple); border: 1px solid rgba(124,58,237,.25); }
+  .role-badge.gerente { background: rgba(8,145,178,.12); color: var(--cyan-d); border: 1px solid rgba(8,145,178,.25); }
+  .role-badge.lector  { background: rgba(100,116,139,.12); color: var(--mute); border: 1px solid rgba(148,163,184,.3); }
 
   .btn-logout {
     display: flex; align-items: center; gap: .4rem;
-    background: transparent; border: 1px solid var(--border);
-    border-radius: 8px; padding: .35rem .75rem;
-    color: var(--mute); font-family: inherit; font-size: .8rem; font-weight: 500;
-    cursor: pointer; transition: border-color .2s, color .2s;
+    background: var(--card); border: 1px solid var(--border); border-radius: 9px;
+    padding: .42rem .8rem; color: var(--txt); font-family: inherit; font-size: .8rem; font-weight: 600;
+    cursor: pointer; transition: border-color .2s, color .2s, background .2s;
   }
-  .btn-logout:hover { border-color: var(--red); color: var(--red); }
+  .btn-logout:hover { border-color: var(--red-l); color: var(--red); background: rgba(239,68,68,.04); }
 
-  /* ── MAIN CONTENT ── */
-  .main { flex: 1; padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
+  .main { flex: 1; padding: 2rem; max-width: 1180px; margin: 0 auto; width: 100%; }
 
-  /* ── PAGE HEADER ── */
-  .page-header {
-    margin-bottom: 2rem;
-    display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
-  }
-  .page-header h1 { font-size: 1.6rem; font-weight: 800; color: var(--white); letter-spacing: -.03em; }
-  .page-header h1 span { color: var(--cyan); }
-  .page-header .desc { font-size: .85rem; color: var(--mute); margin-top: .3rem; line-height: 1.5; }
+  .page-header { margin-bottom: 1.5rem; display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  .page-header h1 { font-size: 1.7rem; font-weight: 800; color: var(--ink); letter-spacing: -.035em; }
+  .page-header h1 span { color: var(--cyan-d); }
+  .page-header .desc { font-size: .87rem; color: var(--mute); margin-top: .35rem; line-height: 1.5; max-width: 620px; }
   .last-updated {
-    display: flex; align-items: center; gap: .4rem;
-    font-size: .75rem; color: var(--mute);
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 8px; padding: .4rem .75rem;
+    display: flex; align-items: center; gap: .45rem; font-size: .76rem; color: var(--txt); font-weight: 600;
+    background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: .45rem .8rem;
   }
-  .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+  .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--green-l); box-shadow: 0 0 0 3px rgba(16,185,129,.18); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.45; } }
+
+  /* ── IMPACT BANNER ── */
+  .impact {
+    display: grid; grid-template-columns: 1fr auto; gap: 1.25rem; align-items: center;
+    background: linear-gradient(120deg, #ECFDF5 0%, #F0F9FF 100%);
+    border: 1px solid #BBF7D0; border-radius: 18px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+  .impact.alert { background: linear-gradient(120deg, #FEF2F2 0%, #FFF7ED 100%); border-color: #FECACA; }
+  .impact-text .impact-line1 { font-size: .74rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--green); margin-bottom: .3rem; }
+  .impact.alert .impact-line1 { color: var(--red); }
+  .impact-text .impact-line2 { font-size: 1.12rem; font-weight: 700; color: var(--ink); line-height: 1.35; }
+  .impact-text .impact-line2 b.r { color: var(--red); } .impact-text .impact-line2 b.g { color: var(--green); }
+  .impact-gauge { display: flex; align-items: center; gap: .9rem; }
+  .gauge-ring { position: relative; width: 76px; height: 76px; flex-shrink: 0; }
+  .gauge-ring svg { transform: rotate(-90deg); }
+  .gauge-ring .gauge-val { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .gauge-ring .gauge-num { font-size: 1.25rem; font-weight: 800; color: var(--ink); line-height: 1; }
+  .gauge-ring .gauge-unit { font-size: .58rem; font-weight: 600; color: var(--mute); }
+  .gauge-label { font-size: .76rem; color: var(--txt); font-weight: 600; max-width: 92px; line-height: 1.3; }
 
   /* ── KPI CARDS ── */
-  .kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 2rem; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 1.75rem; }
   .kpi-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 16px; padding: 1.3rem 1.25rem;
-    display: flex; flex-direction: column; gap: .5rem;
-    position: relative; overflow: hidden;
-    transition: border-color .2s, transform .2s;
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem;
+    position: relative; overflow: hidden; transition: transform .2s, box-shadow .2s, border-color .2s; box-shadow: var(--shadow);
   }
-  .kpi-card:hover { transform: translateY(-2px); }
-  .kpi-card::after {
-    content: ''; position: absolute;
-    bottom: 0; left: 0; right: 0; height: 3px;
-  }
-  .kpi-card.total::after  { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
-  .kpi-card.danger::after { background: var(--red); }
-  .kpi-card.warn::after   { background: var(--gold); }
-  .kpi-card.ok::after     { background: var(--green); }
-  .kpi-card:hover.total  { border-color: rgba(0,194,255,.4); }
-  .kpi-card:hover.danger { border-color: rgba(239,68,68,.4); }
-  .kpi-card:hover.warn   { border-color: rgba(245,166,35,.4); }
-  .kpi-card:hover.ok     { border-color: rgba(16,185,129,.4); }
-
-  .kpi-top { display: flex; align-items: center; justify-content: space-between; }
-  .kpi-icon {
-    width: 36px; height: 36px; border-radius: 9px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .kpi-icon.total  { background: rgba(0,194,255,.12); color: var(--cyan); }
-  .kpi-icon.danger { background: rgba(239,68,68,.12); color: var(--red); }
-  .kpi-icon.warn   { background: rgba(245,166,35,.12); color: var(--gold); }
-  .kpi-icon.ok     { background: rgba(16,185,129,.12); color: var(--green); }
-  .kpi-val { font-size: 2.2rem; font-weight: 800; letter-spacing: -.04em; color: var(--white); line-height: 1; }
-  .kpi-label { font-size: .75rem; font-weight: 500; color: var(--mute); text-transform: uppercase; letter-spacing: .07em; }
+  .kpi-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-h); }
+  .kpi-card::after { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 4px; }
+  .kpi-card.total::after  { background: linear-gradient(180deg, var(--cyan), var(--purple)); }
+  .kpi-card.danger::after { background: var(--red-l); }
+  .kpi-card.warn::after   { background: var(--gold-l); }
+  .kpi-card.ok::after     { background: var(--green-l); }
+  .kpi-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: .7rem; }
+  .kpi-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .kpi-icon.total  { background: rgba(8,145,178,.1); color: var(--cyan-d); }
+  .kpi-icon.danger { background: rgba(220,38,38,.1); color: var(--red); }
+  .kpi-icon.warn   { background: rgba(217,119,6,.1); color: var(--gold); }
+  .kpi-icon.ok     { background: rgba(5,150,105,.1); color: var(--green); }
+  .kpi-delta { font-size: .68rem; font-weight: 700; padding: .15rem .45rem; border-radius: 50px; display: none; }
+  .kpi-delta.show { display: inline-block; }
+  .kpi-delta.good { background: rgba(5,150,105,.1); color: var(--green); }
+  .kpi-delta.bad  { background: rgba(220,38,38,.1); color: var(--red); }
+  .kpi-val { font-size: 2.3rem; font-weight: 800; letter-spacing: -.04em; color: var(--ink); line-height: 1; }
+  .kpi-label { font-size: .76rem; font-weight: 600; color: var(--mute); text-transform: uppercase; letter-spacing: .05em; margin-top: .35rem; }
 
   /* ── SECTION HEADER ── */
-  .section-title {
-    display: flex; align-items: center; gap: .6rem;
-    font-size: 1rem; font-weight: 700; color: var(--white);
-    margin-bottom: 1rem;
-  }
-  .section-title svg { color: var(--cyan); }
-  .section-title .count-badge {
-    font-size: .7rem; font-weight: 600; padding: .15rem .5rem;
-    background: rgba(0,194,255,.1); color: var(--cyan);
-    border: 1px solid rgba(0,194,255,.2); border-radius: 50px;
-  }
+  .section-title { display: flex; align-items: center; gap: .6rem; font-size: 1.05rem; font-weight: 800; color: var(--ink); margin-bottom: 1rem; letter-spacing: -.02em; }
+  .section-title svg { color: var(--cyan-d); }
+  .section-title .count-badge { font-size: .7rem; font-weight: 700; padding: .15rem .55rem; background: rgba(8,145,178,.09); color: var(--cyan-d); border: 1px solid rgba(8,145,178,.2); border-radius: 50px; }
+  .section-spacer { margin-top: 1.75rem; }
 
   /* ── TEAM CARDS ── */
-  .team-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-    gap: 1rem; margin-bottom: 2rem;
-  }
-  .team-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 14px; padding: 1.1rem;
-    transition: transform .2s, border-color .2s;
-    cursor: default;
-  }
-  .team-card:hover { transform: translateY(-2px); }
-  .team-card.SOBRECARGADO { border-color: rgba(239,68,68,.35); }
-  .team-card.SUBUTILIZADO { border-color: rgba(245,166,35,.35); }
-  .team-card.OK           { border-color: rgba(16,185,129,.25); }
-  .team-card.SOBRECARGADO:hover { border-color: rgba(239,68,68,.6); }
-  .team-card.SUBUTILIZADO:hover { border-color: rgba(245,166,35,.6); }
-  .team-card.OK:hover           { border-color: rgba(16,185,129,.5); }
-
+  .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 1rem; margin-bottom: 1.75rem; }
+  .team-card { background: var(--card); border: 1px solid var(--border); border-left-width: 4px; border-radius: 14px; padding: 1.15rem; transition: transform .2s, box-shadow .2s; box-shadow: var(--shadow); }
+  .team-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-h); }
+  .team-card.SOBRECARGADO { border-left-color: var(--red-l); }
+  .team-card.SUBUTILIZADO { border-left-color: var(--gold-l); }
+  .team-card.OK           { border-left-color: var(--green-l); }
   .team-head { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; margin-bottom: .8rem; }
-  .team-name { font-size: .92rem; font-weight: 700; color: var(--white); }
-  .team-sede { font-size: .74rem; color: var(--mute); margin-top: .15rem; display: flex; align-items: center; gap: .3rem; }
+  .team-name { font-size: .96rem; font-weight: 800; color: var(--ink); }
+  .team-sede { font-size: .74rem; color: var(--mute); margin-top: .18rem; display: flex; align-items: center; gap: .3rem; font-weight: 500; }
+  .status-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: .25rem; }
+  .status-dot.SOBRECARGADO { background: var(--red-l); box-shadow: 0 0 0 3px rgba(239,68,68,.16); }
+  .status-dot.SUBUTILIZADO { background: var(--gold-l); box-shadow: 0 0 0 3px rgba(245,158,11,.16); }
+  .status-dot.OK           { background: var(--green-l); box-shadow: 0 0 0 3px rgba(16,185,129,.16); }
+  .team-bar-track { background: var(--bg2); border-radius: 50px; height: 8px; overflow: hidden; margin: .55rem 0 .45rem; position: relative; }
+  .team-bar-fill { height: 100%; border-radius: 50px; transition: width .7s cubic-bezier(.4,0,.2,1); }
+  .bar-SOBRECARGADO { background: linear-gradient(90deg, var(--red), var(--red-l)); }
+  .bar-SUBUTILIZADO { background: linear-gradient(90deg, var(--gold), var(--gold-l)); }
+  .bar-OK           { background: linear-gradient(90deg, var(--green), var(--green-l)); }
+  .team-stats { display: flex; justify-content: space-between; align-items: flex-end; }
+  .team-pct { font-size: 1.05rem; font-weight: 800; line-height: 1; }
+  .team-hours { font-size: .73rem; color: var(--mute); margin-top: .2rem; font-weight: 500; }
+  .status-badge { font-size: .62rem; font-weight: 800; padding: .22rem .6rem; border-radius: 50px; text-transform: uppercase; letter-spacing: .04em; }
+  .status-badge.SOBRECARGADO { background: rgba(220,38,38,.1); color: var(--red); }
+  .status-badge.SUBUTILIZADO { background: rgba(217,119,6,.1); color: var(--gold); }
+  .status-badge.OK           { background: rgba(5,150,105,.1); color: var(--green); }
 
-  .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .status-dot.SOBRECARGADO { background: var(--red); box-shadow: 0 0 6px var(--red); }
-  .status-dot.SUBUTILIZADO { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
-  .status-dot.OK           { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  /* ── REBALANCE PANEL ── */
+  .rebal-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .btn-sim {
+    display: flex; align-items: center; gap: .5rem; padding: .7rem 1.3rem;
+    background: linear-gradient(135deg, var(--green), var(--green-l)); color: #fff;
+    font-family: inherit; font-size: .88rem; font-weight: 700; border: none; border-radius: 11px;
+    cursor: pointer; transition: filter .2s, transform .15s, box-shadow .2s; box-shadow: 0 6px 16px rgba(5,150,105,.28); white-space: nowrap;
+  }
+  .btn-sim:hover { filter: brightness(1.06); transform: translateY(-1px); }
+  .btn-sim.reset { background: var(--card); color: var(--txt); border: 1px solid var(--border2); box-shadow: var(--shadow); }
+  .btn-sim.reset:hover { border-color: var(--cyan); color: var(--cyan-d); }
 
-  .team-bar-wrap { margin: .6rem 0 .4rem; }
-  .team-bar-track {
-    background: rgba(255,255,255,.06); border-radius: 50px;
-    height: 6px; overflow: hidden;
-  }
-  .team-bar-fill { height: 100%; border-radius: 50px; transition: width .6s cubic-bezier(.4,0,.2,1); }
-  .bar-SOBRECARGADO { background: linear-gradient(90deg, #EF4444, #FF6B6B); }
-  .bar-SUBUTILIZADO { background: linear-gradient(90deg, #D97706, #F5A623); }
-  .bar-OK           { background: linear-gradient(90deg, #059669, #10B981); }
+  .sug-list { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1.75rem; }
+  .sug-item { display: flex; align-items: center; gap: 1rem; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: .9rem 1.1rem; box-shadow: var(--shadow); transition: border-color .2s, transform .15s; }
+  .sug-item:hover { border-color: var(--green-l); transform: translateX(3px); }
+  .sug-icon-wrap { width: 40px; height: 40px; flex-shrink: 0; background: rgba(5,150,105,.1); border-radius: 11px; display: flex; align-items: center; justify-content: center; color: var(--green); }
+  .sug-hours { font-size: .92rem; font-weight: 800; color: var(--green); margin-bottom: .12rem; }
+  .sug-detail { font-size: .84rem; color: var(--txt); }
+  .empty-state { background: #ECFDF5; border: 1px solid #BBF7D0; border-radius: 12px; padding: 1.5rem; display: flex; align-items: center; gap: .9rem; color: var(--green); font-size: .9rem; font-weight: 600; }
 
-  .team-stats { display: flex; justify-content: space-between; align-items: center; }
-  .team-pct { font-size: .82rem; font-weight: 600; }
-  .team-hours { font-size: .74rem; color: var(--mute); }
-  .status-badge {
-    font-size: .65rem; font-weight: 700; padding: .2rem .6rem;
-    border-radius: 50px; text-transform: uppercase; letter-spacing: .04em;
-  }
-  .status-badge.SOBRECARGADO { background: rgba(239,68,68,.12); color: var(--red); border: 1px solid rgba(239,68,68,.25); }
-  .status-badge.SUBUTILIZADO { background: rgba(245,166,35,.12); color: var(--gold); border: 1px solid rgba(245,166,35,.25); }
-  .status-badge.OK           { background: rgba(16,185,129,.12); color: var(--green); border: 1px solid rgba(16,185,129,.25); }
-
-  /* ── SUGGESTIONS ── */
-  .sug-list { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 2rem; }
-  .sug-item {
-    display: flex; align-items: center; gap: 1rem;
-    background: var(--card); border: 1px solid rgba(16,185,129,.2);
-    border-radius: 12px; padding: .9rem 1.1rem;
-    transition: border-color .2s, background .2s;
-  }
-  .sug-item:hover { border-color: rgba(16,185,129,.4); background: var(--card2); }
-  .sug-icon-wrap {
-    width: 36px; height: 36px; flex-shrink: 0;
-    background: rgba(16,185,129,.1); border-radius: 9px;
-    display: flex; align-items: center; justify-content: center; color: var(--green);
-  }
-  .sug-hours { font-size: .88rem; font-weight: 700; color: var(--green); margin-bottom: .1rem; }
-  .sug-detail { font-size: .82rem; color: var(--txt); }
-  .empty-state {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 1.5rem;
-    display: flex; align-items: center; gap: .9rem; color: var(--green);
-    font-size: .88rem; font-weight: 500;
-  }
+  /* ── SIM RESULT (before/after) ── */
+  #simResult { display: none; margin-bottom: 1.75rem; }
+  #simResult.show { display: block; animation: fade .4s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.4rem 1.5rem; box-shadow: var(--shadow); }
+  .chart-legend { display: flex; gap: 1.3rem; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+  .lg { display: flex; align-items: center; gap: .45rem; font-size: .78rem; font-weight: 600; color: var(--txt); }
+  .lg-sw { width: 14px; height: 14px; border-radius: 4px; }
+  .lg-line { width: 18px; height: 0; border-top: 2px dashed var(--red); }
+  .chart-wrap { width: 100%; overflow-x: auto; }
+  .sim-note { font-size: .82rem; color: var(--txt); margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border2); line-height: 1.5; }
+  .sim-note b { color: var(--green); }
 
   /* ── ASSIGN FORM ── */
-  .assign-section {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 16px; padding: 1.5rem;
-    margin-bottom: 2rem;
+  .assign-section { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.75rem; box-shadow: var(--shadow); }
+  .assign-grid { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 1rem; align-items: end; margin-top: 1rem; }
+  .form-field label { display: block; font-size: .72rem; font-weight: 700; color: var(--txt); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .4rem; }
+  .form-field input, .form-field select {
+    width: 100%; padding: .7rem .9rem; background: var(--soft); border: 1.5px solid var(--border);
+    border-radius: 10px; color: var(--ink); font-family: inherit; font-size: .9rem; outline: none; transition: border-color .2s, box-shadow .2s, background .2s;
   }
-  .assign-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr auto;
-    gap: 1rem; align-items: end; margin-top: 1rem;
-  }
-  .form-field label {
-    display: block; font-size: .75rem; font-weight: 600;
-    color: var(--mute); text-transform: uppercase; letter-spacing: .06em;
-    margin-bottom: .4rem;
-  }
-  .form-field input,
-  .form-field select {
-    width: 100%; padding: .65rem .85rem;
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 9px; color: var(--white); font-family: inherit; font-size: .88rem;
-    outline: none; transition: border-color .2s, box-shadow .2s;
-  }
-  .form-field input::placeholder { color: var(--mute); }
-  .form-field input:focus,
-  .form-field select:focus {
-    border-color: var(--cyan);
-    box-shadow: 0 0 0 3px rgba(0,194,255,.1);
-  }
-  .form-field select option { background: var(--card); }
+  .form-field input:focus, .form-field select:focus { border-color: var(--cyan); background: var(--card); box-shadow: 0 0 0 4px rgba(8,145,178,.1); }
   .btn-assign {
-    display: flex; align-items: center; justify-content: center; gap: .45rem;
-    padding: .68rem 1.2rem; background: linear-gradient(135deg, var(--cyan2), var(--cyan));
-    color: #021220; font-family: inherit; font-size: .88rem; font-weight: 700;
-    border: none; border-radius: 9px; cursor: pointer;
-    transition: opacity .2s, transform .15s; white-space: nowrap;
+    display: flex; align-items: center; justify-content: center; gap: .45rem; padding: .72rem 1.3rem;
+    background: linear-gradient(135deg, var(--cyan), var(--cyan-d)); color: #fff; font-family: inherit; font-size: .9rem; font-weight: 700;
+    border: none; border-radius: 10px; cursor: pointer; transition: filter .2s, transform .15s; white-space: nowrap; box-shadow: 0 6px 14px rgba(8,145,178,.26);
   }
-  .btn-assign:hover { opacity: .9; transform: translateY(-1px); }
+  .btn-assign:hover { filter: brightness(1.06); transform: translateY(-1px); }
 
-  /* ── LECTOR NOTE ── */
-  .lector-note {
-    display: none; align-items: flex-start; gap: .8rem;
-    background: rgba(245,166,35,.07); border: 1px solid rgba(245,166,35,.25);
-    border-radius: 12px; padding: 1rem 1.2rem;
-    margin-bottom: 2rem; font-size: .85rem; color: var(--gold); line-height: 1.5;
-  }
+  .lector-note { display: none; align-items: flex-start; gap: .8rem; background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1.75rem; font-size: .86rem; color: var(--gold); line-height: 1.5; box-shadow: var(--shadow); }
   .lector-note.show { display: flex; }
   .lector-note svg { flex-shrink: 0; margin-top: .1rem; }
+  .lector-note b { color: #B45309; }
 
-  /* ─── RESPONSIVE ─── */
-  @media (max-width: 900px) {
-    .kpi-grid { grid-template-columns: repeat(2,1fr); }
-    .assign-grid { grid-template-columns: 1fr 1fr; }
-  }
-  @media (max-width: 600px) {
-    .main { padding: 1.25rem; }
-    .topnav { padding: 0 1.25rem; }
-    .kpi-grid { grid-template-columns: 1fr 1fr; }
-    .assign-grid { grid-template-columns: 1fr; }
-    .nav-subtitle { display: none; }
-  }
+  /* ── THRESHOLD INFO ── */
+  .umbral-tip { display: inline-flex; align-items: center; gap: .35rem; font-size: .72rem; font-weight: 600; color: var(--cyan-d); background: rgba(8,145,178,.07); border: 1px solid rgba(8,145,178,.18); padding: .25rem .6rem; border-radius: 50px; margin-left: .5rem; }
+
+  @media (max-width: 900px) { .kpi-grid { grid-template-columns: repeat(2,1fr); } .assign-grid { grid-template-columns: 1fr 1fr; } .impact { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) { .main { padding: 1.25rem; } .topnav { padding: 0 1.25rem; } .kpi-grid { grid-template-columns: 1fr 1fr; } .assign-grid { grid-template-columns: 1fr; } .nav-subtitle { display: none; } }
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     LOGIN
-══════════════════════════════════════════ -->
+<!-- ════════════ LOGIN ════════════ -->
 <div id="login">
   <div class="login-card">
     <div class="login-logo">
       <div class="logo-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>
       </div>
-      <div class="brand"><span>AURA</span></div>
+      <div class="brand">AURA</div>
     </div>
-    <div class="login-subtitle">HealthTech Innovations · Control de acceso seguro<br>OAuth2 + PBKDF2-HMAC-SHA256 + RBAC</div>
+    <div class="login-subtitle">HealthTech Innovations · Control de acceso seguro<br><b>OAuth2 + PBKDF2-HMAC-SHA256 + RBAC</b></div>
 
     <form id="loginForm" autocomplete="on">
       <div class="field-group">
@@ -445,7 +363,7 @@
         </div>
       </div>
       <button type="submit" class="btn-primary" id="loginBtn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
         </svg>
         Ingresar
@@ -460,38 +378,23 @@
 
     <div class="login-hint">
       <div class="hint-title">Usuarios de prueba</div>
-      <div class="hint-row" style="margin-bottom:.35rem">
-        <span class="hint-badge" style="background:rgba(124,58,237,.15);color:#A78BFA;border-color:rgba(124,58,237,.3)">ADMIN</span>
-        <span>admin / admin123 — acceso total</span>
-      </div>
-      <div class="hint-row" style="margin-bottom:.35rem">
-        <span class="hint-badge">GERENTE</span>
-        <span>gerente / gerente123 — puede asignar</span>
-      </div>
-      <div class="hint-row">
-        <span class="hint-badge gy">LECTOR</span>
-        <span>lector / lector123 — solo lectura</span>
-      </div>
+      <div class="hint-row"><span class="hint-badge adm">ADMIN</span><span>admin / admin123 — acceso total</span></div>
+      <div class="hint-row"><span class="hint-badge">GERENTE</span><span>gerente / gerente123 — puede asignar</span></div>
+      <div class="hint-row"><span class="hint-badge gy">LECTOR</span><span>lector / lector123 — solo lectura</span></div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     APP
-══════════════════════════════════════════ -->
+<!-- ════════════ APP ════════════ -->
 <div id="app">
-
-  <!-- TOP NAV -->
   <nav class="topnav">
     <div class="nav-brand">
       <div class="nav-logo-icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>
       </div>
-      <div>
-        <div class="brand-name"><span>AURA</span></div>
-      </div>
+      <div class="brand-name">AURA</div>
       <span class="nav-subtitle">Gestión y Rebalanceo de Carga</span>
     </div>
     <div class="nav-right">
@@ -501,7 +404,7 @@
         <span class="role-badge" id="role"></span>
       </div>
       <button class="btn-logout" id="logout">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
         </svg>
         Salir
@@ -509,55 +412,62 @@
     </div>
   </nav>
 
-  <!-- MAIN -->
   <main class="main">
-    <!-- Page header -->
     <div class="page-header">
       <div>
         <h1>Panel de <span>Control</span></h1>
-        <div class="desc">HealthTech Innovations · Detecta equipos sobrecargados y subutilizados — sugiere rebalanceo en tiempo real</div>
+        <div class="desc">HealthTech Innovations · Detecta equipos sobrecargados y subutilizados, y demuestra el rebalanceo que equilibra la organización.</div>
       </div>
-      <div class="last-updated">
-        <div class="pulse"></div>
-        Datos en tiempo real
-      </div>
+      <div class="last-updated"><div class="pulse"></div> Datos en tiempo real</div>
     </div>
+
+    <!-- IMPACT BANNER -->
+    <div class="impact" id="impact"></div>
 
     <!-- KPIs -->
     <div class="kpi-grid" id="kpis"></div>
 
-    <!-- Equipo cards -->
+    <!-- TEAM CARDS -->
     <div class="section-title">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
       </svg>
       Carga por Equipo
       <span class="count-badge" id="teamCount">5 equipos</span>
+      <span class="umbral-tip" title="Umbral de negocio">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        Sobrecarga &gt; 85% · Subutilizado &lt; 60%
+      </span>
     </div>
     <div class="team-grid" id="teams"></div>
 
-    <!-- Suggestions -->
-    <div class="section-title">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
-      </svg>
-      Rebalanceo Sugerido
+    <!-- REBALANCE -->
+    <div class="rebal-head">
+      <div class="section-title" style="margin-bottom:0">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+        </svg>
+        Rebalanceo Sugerido
+      </div>
+      <div id="rebalActions"></div>
     </div>
     <div class="sug-list" id="sugerencias"></div>
 
-    <!-- Lector note -->
+    <!-- SIM RESULT -->
+    <div id="simResult"></div>
+
+    <!-- LECTOR NOTE -->
     <div class="lector-note" id="lectorNote">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
       </svg>
-      <div>Tu rol es <strong>lector</strong>: acceso de solo lectura. La asignación de proyectos está restringida a admin/gerente — principio de mínimo privilegio (HIPAA/GDPR).</div>
+      <div>Tu rol es <b>lector</b>: acceso de solo lectura. La asignación de proyectos está restringida a admin/gerente — principio de mínimo privilegio (HIPAA/GDPR).</div>
     </div>
 
-    <!-- Assign form -->
+    <!-- ASSIGN FORM -->
     <div class="assign-section" id="formWrap">
       <div class="section-title" style="margin-bottom:0">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
         </svg>
         Asignar Nuevo Proyecto
@@ -577,7 +487,7 @@
         </div>
         <div>
           <button type="submit" class="btn-assign">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
             Asignar
@@ -585,7 +495,6 @@
         </div>
       </form>
     </div>
-
   </main>
 </div>
 
@@ -594,103 +503,92 @@ const API = "";
 let token   = localStorage.getItem("aura_token") || "";
 let rol     = localStorage.getItem("aura_rol")   || "";
 let usuario = localStorage.getItem("aura_user")  || "";
+let _ultData = null;   // último análisis (para el gráfico)
+let _simOn   = false;
 
-function authHeaders(extra={}) {
-  return Object.assign({ "Authorization": "Bearer " + token }, extra);
-}
-
-function barColor(estado) {
-  return estado === "SOBRECARGADO" ? "bar-SOBRECARGADO"
-       : estado === "SUBUTILIZADO" ? "bar-SUBUTILIZADO"
-       : "bar-OK";
-}
-function pctColor(estado) {
-  return estado === "SOBRECARGADO" ? "var(--red)"
-       : estado === "SUBUTILIZADO" ? "var(--gold)"
-       : "var(--green)";
-}
-function initials(name) {
-  return name ? name.slice(0,2).toUpperCase() : "?";
-}
+function authHeaders(extra={}) { return Object.assign({ "Authorization": "Bearer " + token }, extra); }
+function barColor(e){ return e==="SOBRECARGADO"?"bar-SOBRECARGADO":e==="SUBUTILIZADO"?"bar-SUBUTILIZADO":"bar-OK"; }
+function pctColor(e){ return e==="SOBRECARGADO"?"var(--red)":e==="SUBUTILIZADO"?"var(--gold)":"var(--green)"; }
+function hexFor(e){ return e==="SOBRECARGADO"?"#EF4444":e==="SUBUTILIZADO"?"#F59E0B":"#10B981"; }
+function initials(n){ return n?n.slice(0,2).toUpperCase():"?"; }
 
 /* ─── LOGIN ─── */
-const BTN_HTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> Ingresar`;
-
-function resetBtn(btn) {
-  btn.style.opacity = "1";
-  btn.disabled = false;
-  btn.innerHTML = BTN_HTML;
-}
+const BTN_HTML = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> Ingresar`;
+const ERR_ICON = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+function resetBtn(btn){ btn.disabled=false; btn.innerHTML=BTN_HTML; }
 
 document.getElementById("loginForm").addEventListener("submit", async ev => {
   ev.preventDefault();
   const btn = document.getElementById("loginBtn");
-  btn.style.opacity = ".65";
-  btn.disabled = true;
-  btn.textContent = "Verificando...";
-
-  const errEl = document.getElementById("err");
-  errEl.classList.remove("show");
-
+  btn.disabled = true; btn.textContent = "Verificando...";
+  const errEl = document.getElementById("err"); errEl.classList.remove("show");
   const body = new URLSearchParams();
   body.append("username", document.getElementById("u").value);
   body.append("password", document.getElementById("p").value);
-
   let r;
   try {
-    r = await fetch(API + "/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body
-    });
+    r = await fetch(API + "/api/login", { method:"POST", headers:{ "Content-Type":"application/x-www-form-urlencoded" }, body });
   } catch (e) {
-    // Error de red (servidor apagado, CORS, etc.)
-    errEl.querySelector ? null : null;
-    errEl.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> No se puede conectar al servidor — ¿está uvicorn corriendo?`;
-    errEl.classList.add("show");
-    resetBtn(btn);
-    return;
+    errEl.innerHTML = ERR_ICON + " No se puede conectar al servidor — ¿está uvicorn corriendo?";
+    errEl.classList.add("show"); resetBtn(btn); return;
   }
-
-  if (!r.ok) {
-    errEl.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Usuario o contraseña incorrectos`;
-    errEl.classList.add("show");
-    resetBtn(btn);
-    return;
-  }
-
+  if (!r.ok) { errEl.innerHTML = ERR_ICON + " Usuario o contraseña incorrectos"; errEl.classList.add("show"); resetBtn(btn); return; }
   const d = await r.json();
   token = d.access_token; rol = d.rol; usuario = d.usuario;
-  localStorage.setItem("aura_token", token);
-  localStorage.setItem("aura_rol",   rol);
-  localStorage.setItem("aura_user",  usuario);
+  localStorage.setItem("aura_token", token); localStorage.setItem("aura_rol", rol); localStorage.setItem("aura_user", usuario);
   entrar();
 });
 
 /* ─── LOGOUT ─── */
 document.getElementById("logout").addEventListener("click", async () => {
-  try { await fetch(API + "/api/logout", { method: "POST", headers: authHeaders() }); } catch {}
-  token = rol = usuario = "";
-  localStorage.clear();
+  try { await fetch(API + "/api/logout", { method:"POST", headers:authHeaders() }); } catch {}
+  token = rol = usuario = ""; localStorage.clear();
   document.getElementById("app").classList.remove("visible");
   document.getElementById("login").style.display = "flex";
+  const btn = document.getElementById("loginBtn"); resetBtn(btn);
 });
 
 /* ─── ENTRAR ─── */
 function entrar() {
-  document.getElementById("login").style.display  = "none";
+  document.getElementById("login").style.display = "none";
   document.getElementById("app").classList.add("visible");
-  document.getElementById("who").textContent       = usuario;
+  document.getElementById("who").textContent = usuario;
   document.getElementById("userInitial").textContent = initials(usuario);
-
   const roleEl = document.getElementById("role");
-  roleEl.textContent = rol;
-  roleEl.className = "role-badge " + rol;
-
+  roleEl.textContent = rol; roleEl.className = "role-badge " + rol;
   const esLector = rol === "lector";
-  document.getElementById("formWrap").style.display  = esLector ? "none" : "block";
+  document.getElementById("formWrap").style.display = esLector ? "none" : "block";
   document.getElementById("lectorNote").classList[esLector ? "add" : "remove"]("show");
   cargar();
+}
+
+/* ─── KPI CARD ─── */
+function kpiCard(cls, icon, val, label, color) {
+  return `<div class="kpi-card ${cls}">
+    <div class="kpi-top"><div class="kpi-icon ${cls}">${icon}</div></div>
+    <div class="kpi-val" ${color?`style="color:${color}"`:""}>${val}</div>
+    <div class="kpi-label">${label}</div>
+  </div>`;
+}
+const IC = {
+  team:`<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  alert:`<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  idle:`<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+  ok:`<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+};
+
+/* ─── GAUGE (índice de balance) ─── */
+function gauge(val) {
+  const r = 32, c = 2*Math.PI*r, off = c*(1-val/100);
+  const col = val>=80?"#10B981":val>=55?"#F59E0B":"#EF4444";
+  return `<div class="gauge-ring">
+    <svg width="76" height="76">
+      <circle cx="38" cy="38" r="${r}" fill="none" stroke="#E2E8F0" stroke-width="7"/>
+      <circle cx="38" cy="38" r="${r}" fill="none" stroke="${col}" stroke-width="7" stroke-linecap="round"
+        stroke-dasharray="${c}" stroke-dashoffset="${off}" style="transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1)"/>
+    </svg>
+    <div class="gauge-val"><div class="gauge-num">${val}</div><div class="gauge-unit">/ 100</div></div>
+  </div>`;
 }
 
 /* ─── DASHBOARD ─── */
@@ -698,118 +596,152 @@ async function cargar() {
   const r = await fetch(API + "/api/analisis", { headers: authHeaders() });
   if (r.status === 401) { document.getElementById("logout").click(); return; }
   const d = await r.json();
+  _ultData = d; _simOn = false;
+  document.getElementById("simResult").classList.remove("show");
+
+  const k = d.kpis;
+  /* Impact banner */
+  const imp = document.getElementById("impact");
+  const hayProblema = k.sobrecargados>0 || k.subutilizados>0;
+  imp.className = "impact" + (hayProblema ? " alert" : "");
+  imp.innerHTML = `
+    <div class="impact-text">
+      <div class="impact-line1">${hayProblema ? "Problema detectado · RF2" : "Organización equilibrada"}</div>
+      <div class="impact-line2">${ hayProblema
+        ? `<b class="r">${k.sobrecargados}</b> equipo(s) sobrecargado(s) y <b class="r">${k.subutilizados}</b> subutilizado(s). El rebalanceo puede equilibrar la carga sin contratar.`
+        : `Los <b class="g">${k.total_equipos}</b> equipos están dentro de su capacidad saludable.` }</div>
+    </div>
+    <div class="impact-gauge">${gauge(d.balance)}<div class="gauge-label">Índice de balance organizacional</div></div>`;
 
   /* KPIs */
-  document.getElementById("kpis").innerHTML = `
-    <div class="kpi-card total">
-      <div class="kpi-top">
-        <div class="kpi-icon total">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
-        </div>
-      </div>
-      <div class="kpi-val">${d.kpis.total_equipos}</div>
-      <div class="kpi-label">Equipos totales</div>
-    </div>
-    <div class="kpi-card danger">
-      <div class="kpi-top">
-        <div class="kpi-icon danger">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
-        </div>
-      </div>
-      <div class="kpi-val" style="color:var(--red)">${d.kpis.sobrecargados}</div>
-      <div class="kpi-label">Sobrecargados</div>
-    </div>
-    <div class="kpi-card warn">
-      <div class="kpi-top">
-        <div class="kpi-icon warn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
-            <line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-        </div>
-      </div>
-      <div class="kpi-val" style="color:var(--gold)">${d.kpis.subutilizados}</div>
-      <div class="kpi-label">Subutilizados</div>
-    </div>
-    <div class="kpi-card ok">
-      <div class="kpi-top">
-        <div class="kpi-icon ok">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-          </svg>
-        </div>
-      </div>
-      <div class="kpi-val" style="color:var(--green)">${d.kpis.balanceados}</div>
-      <div class="kpi-label">Balanceados</div>
-    </div>`;
-
-  /* Team count badge */
-  document.getElementById("teamCount").textContent = d.equipos.length + " equipos";
+  document.getElementById("kpis").innerHTML =
+    kpiCard("total", IC.team, k.total_equipos, "Equipos totales") +
+    kpiCard("danger", IC.alert, k.sobrecargados, "Sobrecargados", "var(--red)") +
+    kpiCard("warn", IC.idle, k.subutilizados, "Subutilizados", "var(--gold)") +
+    kpiCard("ok", IC.ok, k.balanceados, "Balanceados", "var(--green)");
 
   /* Team cards */
+  document.getElementById("teamCount").textContent = d.equipos.length + " equipos";
   document.getElementById("teams").innerHTML = d.equipos.map(e => `
     <div class="team-card ${e.estado}">
       <div class="team-head">
         <div>
           <div class="team-name">${e.nombre}</div>
           <div class="team-sede">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-            </svg>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             ${e.sede}
           </div>
         </div>
         <div class="status-dot ${e.estado}"></div>
       </div>
-      <div class="team-bar-wrap">
-        <div class="team-bar-track">
-          <div class="team-bar-fill ${barColor(e.estado)}" style="width:${Math.min(e.uso,100)}%"></div>
-        </div>
-      </div>
+      <div class="team-bar-track"><div class="team-bar-fill ${barColor(e.estado)}" style="width:${Math.min(e.uso,100)}%"></div></div>
       <div class="team-stats">
-        <div>
-          <div class="team-pct" style="color:${pctColor(e.estado)}">${e.uso}%</div>
-          <div class="team-hours">${e.horas}h / ${e.capacidad}h</div>
-        </div>
+        <div><div class="team-pct" style="color:${pctColor(e.estado)}">${e.uso}%</div><div class="team-hours">${e.horas}h / ${e.capacidad}h</div></div>
         <span class="status-badge ${e.estado}">${e.estado}</span>
       </div>
     </div>`).join("");
 
-  /* Suggestions */
+  /* Suggestions + action button */
   const sug = document.getElementById("sugerencias");
+  const actions = document.getElementById("rebalActions");
   if (d.sugerencias.length) {
     sug.innerHTML = d.sugerencias.map(x => `
       <div class="sug-item">
         <div class="sug-icon-wrap">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
-          </svg>
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
         </div>
-        <div>
-          <div class="sug-hours">${x.horas}h a reasignar</div>
-          <div class="sug-detail">${x.detalle}</div>
-        </div>
+        <div><div class="sug-hours">${x.horas}h a reasignar</div><div class="sug-detail">${x.detalle}</div></div>
       </div>`).join("");
+    actions.innerHTML = `<button class="btn-sim" id="btnSim">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Aplicar rebalanceo (simular)</button>`;
+    document.getElementById("btnSim").addEventListener("click", simular);
   } else {
-    sug.innerHTML = `
-      <div class="empty-state">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-        </svg>
-        Todos los equipos están dentro de su capacidad — no se requiere rebalanceo.
-      </div>`;
+    sug.innerHTML = `<div class="empty-state">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Todos los equipos están dentro de su capacidad — no se requiere rebalanceo.</div>`;
+    actions.innerHTML = "";
   }
 
   /* Equipo select */
-  document.getElementById("equipo").innerHTML =
-    d.equipos.map(e => `<option value="${e.id}">${e.nombre} (${e.sede})</option>`).join("");
+  document.getElementById("equipo").innerHTML = d.equipos.map(e => `<option value="${e.id}">${e.nombre} (${e.sede})</option>`).join("");
+}
+
+/* ─── SIMULAR (antes → después) ─── */
+async function simular() {
+  const r = await fetch(API + "/api/simular", { headers: authHeaders() });
+  if (r.status === 401) { document.getElementById("logout").click(); return; }
+  const s = await r.json();
+  _simOn = true;
+  const box = document.getElementById("simResult");
+  box.innerHTML = chartHTML(s);
+  box.classList.add("show");
+  box.scrollIntoView({ behavior:"smooth", block:"nearest" });
+  document.getElementById("rebalActions").innerHTML = `<button class="btn-sim reset" id="btnReset">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+    Ver estado actual</button>`;
+  document.getElementById("btnReset").addEventListener("click", () => {
+    box.classList.remove("show");
+    document.getElementById("rebalActions").innerHTML = `<button class="btn-sim" id="btnSim">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Aplicar rebalanceo (simular)</button>`;
+    document.getElementById("btnSim").addEventListener("click", simular);
+  });
+}
+
+/* SVG grouped bar chart: uso% actual vs proyectado por equipo */
+function chartHTML(s) {
+  const eq = s.actual.equipos;
+  const proy = Object.fromEntries(s.proyectado.equipos.map(e => [e.id, e]));
+  const W = Math.max(560, eq.length*120), H = 250, padL = 38, padB = 46, padT = 14, padR = 10;
+  const plotH = H - padB - padT, plotW = W - padL - padR;
+  const maxV = Math.max(110, ...eq.map(e=>e.uso), ...s.proyectado.equipos.map(e=>e.uso));
+  const y = v => padT + plotH*(1 - v/maxV);
+  const grp = plotW/eq.length, bw = Math.min(30, grp/3.2);
+  let bars = "", labels = "", grid = "";
+  [0,25,50,60,85,100].forEach(g => {
+    const yy = y(g); const dash = (g===85||g===60);
+    grid += `<line x1="${padL}" y1="${yy}" x2="${W-padR}" y2="${yy}" stroke="${dash?(g===85?'#FCA5A5':'#FCD34D'):'#EDF1F7'}" stroke-width="1" ${dash?'stroke-dasharray="5 4"':''}/>`;
+    grid += `<text x="${padL-6}" y="${yy+3}" text-anchor="end" font-size="9" fill="#94A3B8" font-family="Inter">${g}</text>`;
+  });
+  grid += `<text x="${padL+4}" y="${y(85)-4}" font-size="9" fill="#DC2626" font-family="Inter" font-weight="700">Umbral 85%</text>`;
+  eq.forEach((e,i) => {
+    const cx = padL + grp*i + grp/2;
+    const x1 = cx - bw - 3, x2 = cx + 3;
+    const va = e.uso, vp = proy[e.id].uso;
+    const ha = plotH*va/maxV, hp = plotH*vp/maxV;
+    bars += `<rect x="${x1}" y="${y(va)}" width="${bw}" height="${ha}" rx="3" fill="${hexFor(e.estado)}" opacity=".55"/>`;
+    bars += `<rect x="${x2}" y="${y(vp)}" width="${bw}" height="${hp}" rx="3" fill="${hexFor(proy[e.id].estado)}"><animate attributeName="height" from="0" to="${hp}" dur="0.6s"/><animate attributeName="y" from="${padT+plotH}" to="${y(vp)}" dur="0.6s"/></rect>`;
+    bars += `<text x="${x1+bw/2}" y="${y(va)-4}" text-anchor="middle" font-size="8.5" fill="#94A3B8" font-family="Inter">${va}</text>`;
+    bars += `<text x="${x2+bw/2}" y="${y(vp)-4}" text-anchor="middle" font-size="8.5" fill="${hexFor(proy[e.id].estado)}" font-family="Inter" font-weight="700">${vp}</text>`;
+    labels += `<text x="${cx}" y="${H-padB+16}" text-anchor="middle" font-size="9.5" fill="#475569" font-family="Inter" font-weight="600">${e.nombre}</text>`;
+    labels += `<text x="${cx}" y="${H-padB+28}" text-anchor="middle" font-size="8" fill="#94A3B8" font-family="Inter">${e.sede}</text>`;
+  });
+
+  const a = s.actual.kpis, b = s.proyectado.kpis;
+  const dBal = s.proyectado.balance - s.actual.balance;
+  return `<div class="chart-card">
+    <div class="section-title" style="margin-bottom:.4rem">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Simulación de Rebalanceo · Antes → Después
+    </div>
+    <p style="font-size:.84rem;color:var(--mute);margin-bottom:1rem">Proyección de mover <b style="color:var(--ink)">${s.horas_movidas}h</b> entre equipos. No altera los datos reales.</p>
+    <div class="chart-legend">
+      <span class="lg"><span class="lg-sw" style="background:#94A3B8;opacity:.55"></span>Uso actual (%)</span>
+      <span class="lg"><span class="lg-sw" style="background:#10B981"></span>Uso tras rebalanceo (%)</span>
+      <span class="lg"><span class="lg-line"></span>Umbral de sobrecarga (85%)</span>
+    </div>
+    <div class="chart-wrap">
+      <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px;height:auto;font-family:Inter">${grid}${bars}${labels}</svg>
+    </div>
+    <div class="sim-note">
+      Resultado: sobrecargados <b style="color:var(--red)">${a.sobrecargados}</b> → <b>${b.sobrecargados}</b> ·
+      subutilizados <b style="color:var(--gold)">${a.subutilizados}</b> → <b>${b.subutilizados}</b> ·
+      balanceados <b>${a.balanceados}</b> → <b style="color:var(--green)">${b.balanceados}</b>.
+      Índice de balance <b>${s.actual.balance}</b> → <b style="color:var(--green)">${s.proyectado.balance}</b>
+      (${dBal>=0?"+":""}${dBal} pts). El rebalanceo ${b.sobrecargados===0?"<b>elimina toda la sobrecarga</b>":"reduce la sobrecarga"} sin contratar personal.
+    </div>
+  </div>`;
 }
 
 /* ─── ASSIGN ─── */
@@ -820,11 +752,7 @@ document.getElementById("form").addEventListener("submit", async ev => {
     equipo: document.getElementById("equipo").value,
     horas:  parseInt(document.getElementById("horas").value)
   };
-  const r = await fetch(API + "/api/proyectos", {
-    method: "POST",
-    headers: authHeaders({ "Content-Type": "application/json" }),
-    body: JSON.stringify(body)
-  });
+  const r = await fetch(API + "/api/proyectos", { method:"POST", headers:authHeaders({ "Content-Type":"application/json" }), body:JSON.stringify(body) });
   if (r.status === 403) { alert("Sin permisos para asignar (rol lector)."); return; }
   if (r.status === 401) { document.getElementById("logout").click(); return; }
   document.getElementById("nombre").value = "";
